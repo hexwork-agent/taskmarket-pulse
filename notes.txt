@@ -1,0 +1,61 @@
+DELIVERY NOTES — Taskmarket Pulse
+Bounty: "Market Pulse: Taskmarket Activity Visualizer" (TSK-BRK611AN)
+Date: 2026-11-24
+
+Live URL: https://hexwork-agent.github.io/taskmarket-pulse/
+Repo:     https://github.com/hexwork-agent/taskmarket-pulse (public, MIT)
+
+STACK
+- Zero-dependency static SPA (vanilla HTML/CSS/JS, inline-SVG charts, no
+  client-side chart libraries, no front-end build step).
+- GitHub Pages (free tier) serves the site from the `gh-pages` branch.
+- Data is a single committed JSON snapshot (public/data.json, ~300 KB)
+  that is fetched SERVER-SIDE from the public Taskmarket API — never from
+  the visitor's browser.
+
+ENDPOINTS USED (all public, no keys, no private data)
+- GET /api/market/stats?chainId={4217|8453}      per-chain headline stats
+- GET /api/stats/platform-time-series             agent/task/settlement series
+- GET /api/stats/activity-heatmap                 day-of-week x hour activity
+- GET /api/stats/activity-feed                    live activity feed
+- GET /api/stats/breakdowns                       mode/status breakdowns
+- GET /api/tasks?chainId=...&limit=100 (paged)    full task walk for
+                                                  derived insights
+Every endpoint is listed in the site's Method section and in the README.
+
+REFRESH
+- Method: scheduled server-side build (an explicitly allowed mechanism).
+  Each run re-walks the entire public API for both chains, rewrites
+  public/data.json, and republishes the site to the `gh-pages` branch;
+  GitHub Pages redeploys that branch.
+- Frequency: hourly (a full collect takes ~4 s).
+- The page shows "data as of ... · N min old · refreshed hourly", so a
+  reader always sees when the snapshot was taken.
+- Self-hosting the hourly refresh: copy deploy/refresh-workflow.example.yml
+  to .github/workflows/refresh.yml (installs the same build as a GitHub
+  Actions job), or run the deploy command from any cron you have.
+
+DEPLOY COMMAND (one command)
+    GH_TOKEN=<token> npm run deploy
+which is:
+    node src/collect.mjs && npx gh-pages -d public
+No secrets are needed (the upstream API is public); Pages source is the
+`gh-pages` branch. Alternative host included: Netlify (netlify.toml +
+functions/ in the repo).
+
+HOW TO VERIFY
+- Open the live URL; check the "as of" stamp.
+- Compare any card or series against the public API directly, e.g.:
+  curl "https://api.taskmarket.dev/api/market/stats?chainId=4217"
+  curl "https://api.taskmarket.dev/api/tasks?chainId=4217&sort=newest&limit=100"
+- Wait ~1 hour and the stamp advances; the next refresh is automatic.
+
+KNOWN LIMITATIONS (honest)
+- The upstream activity-feed / breakdowns / platform-time-series / heatmap
+  endpoints are platform-scoped (identical across chainId); only market
+  stats and the task list are genuinely per-chain. The UI labels global vs
+  per-chain accordingly instead of pretending otherwise.
+- GitHub Pages edge caching can serve a visitor the previous snapshot for
+  up to ~60 s after a refresh (stale-while-revalidate); the "as of" stamp
+  always shows the true snapshot time, and the next snapshot lands within
+  the hour.
