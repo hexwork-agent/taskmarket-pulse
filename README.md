@@ -47,7 +47,7 @@ The data is fetched **on the server**, never from the visitor's browser (the Tas
                                                                └──────────────────┘
 ```
 
-Default (this repo): **GitHub Actions** runs `node src/collect.mjs` hourly (`.github/workflows/refresh.yml`) and publishes the whole `public/` site (including the fresh `data.json`) to the `gh-pages` branch; **GitHub Pages** serves that branch. Alternative: two **Netlify** functions in `functions/` (`api-data` serves the blob and self-heals; `api-refresh` is an `@hourly` cron). A full collect takes ~4 s, well inside either budget.
+Default (this repo): an **hourly server-side build** runs `node src/collect.mjs` and publishes the whole `public/` site (including the fresh `data.json`) to the `gh-pages` branch; **GitHub Pages** serves that branch. The same build is provided as a ready-to-install GitHub Actions workflow (`deploy/refresh-workflow.example.yml`) so you can host the hourly refresh yourself, and as `npm run deploy` for any cron. Alternative: two **Netlify** functions in `functions/` (`api-data` serves the blob and self-heals; `api-refresh` is an `@hourly` cron). A full collect takes ~4 s, well inside either budget.
 
 ## Running it locally
 
@@ -72,7 +72,14 @@ The default host is **GitHub Pages** with an hourly Actions refresh (the schedul
 GH_TOKEN=<token> npm run deploy
 ```
 
-That's `node src/collect.mjs && npx gh-pages -d public` (publishes `public/` to the `gh-pages` branch, which Pages serves). For the live instance in this repo, the Actions workflow (`.github/workflows/refresh.yml`) already re-runs the collect every hour and republishes, so the Pages deployment stays current with no manual step. No secrets are needed — the upstream API is public.
+That's `node src/collect.mjs && npx gh-pages -d public` (publishes `public/` to the `gh-pages` branch, which Pages serves). No secrets are needed — the upstream API is public.
+
+To get **automatic hourly updates** on your own GitHub, either:
+
+1. copy `deploy/refresh-workflow.example.yml` to `.github/workflows/refresh.yml` (pushing workflow files needs a token with the `workflow` scope) — it collects fresh data hourly and republishes `public/` to `gh-pages`; or
+2. run `npm run deploy` from your own cron (any server, CI, or scheduler).
+
+For this repo's live instance, the publisher runs the same collect+publish cycle hourly from a server-side job.
 
 **Alternative: Netlify.** The same code runs on Netlify with two functions in `functions/` — `api-data` (serves the blob, self-heals if missing) and `api-refresh` (`@hourly` cron; a full collect takes ~4 s inside the 30 s budget). Config is in `netlify.toml`.
 
