@@ -1,0 +1,35 @@
+name: refresh-and-deploy
+
+# Server-side data fetch + hourly refresh + deploy.
+# The Taskmarket API does not allow cross-site browser requests, so the
+# snapshot is collected here (server-side) on every run and published to the
+# `gh-pages` branch, which GitHub Pages serves. Each run = a fresh build.
+
+on:
+  schedule:
+    - cron: "7 * * * *"        # every hour at :07
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Collect fresh snapshot from the public Taskmarket API
+        run: node src/collect.mjs
+
+      - name: Publish site (incl. fresh data.json) to the gh-pages branch
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: public
+          keep_files: false   # full replace, so stale files never linger
