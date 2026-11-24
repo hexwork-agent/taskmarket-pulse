@@ -1,8 +1,6 @@
 node_modules/
 .netlify/
-data.json
 dev.log
 devserver.js
 inspect*.js
 build_fonts.py
-notes.txt

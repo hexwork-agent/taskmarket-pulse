@@ -419,6 +419,13 @@
     $$("#chainpick .chip").forEach((b) => b.classList.toggle("on", b.dataset.chain === state.chain));
   }
 
+  function loadJson() {
+    // serverless host (Netlify): /api/data · static scheduled-build host (Pages): /data.json
+    return fetch("/api/data", { headers: { "cache-control": "no-cache" } })
+      .then((r) => { if (r.ok) return r.json(); throw new Error("HTTP " + r.status); })
+      .catch(() => fetch("/data.json", { headers: { "cache-control": "no-cache" } }).then((r) => { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); }));
+  }
+
   function boot() {
     wireChips("#chainpick", (b) => { state.chain = b.dataset.chain; renderAll(); });
     wireChips("#range-flow", (b) => { state.flow.range = b.dataset.range; renderFlow(); });
@@ -437,19 +444,19 @@
     };
     window.addEventListener("hashchange", applyHash);
 
-    fetch("/api/data", { headers: { "cache-control": "no-cache" } })
-      .then((r) => { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
-      .then((d) => {
-        state.data = d;
-        // default chain: whichever has more tasks (the active one)
-        const c1 = d.chains["4217"], c2 = d.chains["8453"];
-        syncChainPick();
-        renderAll();
-        applyHash();
-      })
-      .catch((e) => {
-        $("#asof").textContent = "data unavailable right now: " + e.message;
-      });
+    const load = () => loadJson().then((d) => {
+      state.data = d;
+      syncChainPick();
+      renderAll();
+    }).catch((e) => {
+      $("#asof").textContent = "data unavailable right now: " + e.message;
+    });
+    load();
+    // stay fresh while open: the snapshot refreshes at least hourly on the server;
+    // re-poll every 10 min so a left-open tab picks up the next snapshot.
+    setInterval(load, 600000);
+
+    applyHash();
   }
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);

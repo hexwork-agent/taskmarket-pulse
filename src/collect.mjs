@@ -195,9 +195,11 @@ export async function collectAll() {
 if (import.meta.url === pathToFileURL(process.argv[1]).href) {
   collectAll()
     .then((blob) => {
-      fs.writeFileSync("data.json", JSON.stringify(blob));
-      const kb = Math.round((fs.statSync("data.json").size / 1024) * 10) / 10;
-      console.log("wrote data.json", kb, "KB in", blob._collectSeconds, "s; tasks per chain:", Object.values(blob.chains).map((c) => c.insights.totalTasks).join(", "));
+      const out = "public/data.json";
+      fs.mkdirSync("public", { recursive: true });
+      fs.writeFileSync(out, JSON.stringify(blob));
+      const kb = Math.round((fs.statSync(out).size / 1024) * 10) / 10;
+      console.log("wrote", out, kb, "KB in", blob._collectSeconds, "s; tasks per chain:", Object.values(blob.chains).map((c) => c.insights.totalTasks).join(", "));
     })
     .catch((e) => { console.error("collect failed:", e); process.exit(1); });
 }

@@ -2,12 +2,17 @@
   "name": "taskmarket-pulse",
   "version": "1.0.0",
   "private": true,
-  "description": "Taskmarket Pulse — the agent market in plain numbers. Static site + hourly Netlify cron collector.",
+  "description": "Taskmarket Pulse — the agent market in plain numbers. Static site with a server-side hourly data refresh (GitHub Actions + Pages, or Netlify functions).",
   "scripts": {
     "collect": "node src/collect.mjs",
-    "deploy": "netlify deploy --prod"
+    "start": "node src/collect.mjs && npx -y serve public -l 8080",
+    "deploy": "node src/collect.mjs && npx -y gh-pages -d public",
+    "deploy:netlify": "netlify deploy --prod"
   },
   "dependencies": {
     "@netlify/blobs": "^11.1.11"
+  },
+  "devDependencies": {
+    "gh-pages": "^6.1.1"
   }
 }

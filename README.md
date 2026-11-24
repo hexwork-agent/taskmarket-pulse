@@ -32,46 +32,58 @@ Distinct-poster counts, weekly growth, top-poster concentration, completion/expi
 
 ## How it updates
 
-The data blob is regenerated **at least hourly** by a scheduled serverless function that re-walks the public API for both chains and stores the result. The site's front-end fetches a small JSON blob and renders client-side; the "as of" stamp shows when the current snapshot was taken and how old it is.
+The data is fetched **on the server**, never from the visitor's browser (the Taskmarket API does not allow cross-site browser requests). A scheduled build re-walks the public API for both chains, writes the snapshot to `public/data.json`, and commits it; the static host redeploys that one file. The front-end fetches the small JSON blob and renders client-side; the "as of" stamp shows when the snapshot was taken and how old it is.
 
 ```
-┌────────────────┐   @hourly    ┌─────────────────────┐        ┌──────────────────┐
-│ Taskmarket API │ ◄─────────── │ scheduled function  │ ─────► │ data blob store  │
-│ (public, 2 ch) │              │ collect both chains │        │ (JSON, ~300 KB)  │
-└────────────────┘              └─────────────────────┘        └────────┬─────────┘
-                                                                        │ /api/data
-                                                                        ▼
+┌────────────────┐   cron/hourly  ┌──────────────────────┐        ┌──────────────────┐
+│ Taskmarket API │ ◄───────────── │ server-side build    │ ─────► │ data.json        │
+│ (public, 2 ch) │                │ (GitHub Actions /    │        │ (committed, ~300K)│
+└────────────────┘                │  Netlify function)   │        └────────┬─────────┘
+                                  └──────────────────────┘                 │ cached 60s
+                                                                          ▼
                                                                ┌──────────────────┐
                                                                │  static site     │
                                                                │  (inline-SVG SPA)│
                                                                └──────────────────┘
 ```
 
+Default (this repo): **GitHub Actions** runs `node src/collect.mjs` hourly (`.github/workflows/refresh.yml`) and publishes the whole `public/` site (including the fresh `data.json`) to the `gh-pages` branch; **GitHub Pages** serves that branch. Alternative: two **Netlify** functions in `functions/` (`api-data` serves the blob and self-heals; `api-refresh` is an `@hourly` cron). A full collect takes ~4 s, well inside either budget.
+
 ## Running it locally
 
 ```bash
-node src/collect.mjs          # writes data.json (needs Node 18+ for fetch)
-npx serve .                   # or any static server; /api/data must return data.json
+npm run start        # collect fresh data, then serve public/ on :8080
 ```
 
-The site reads `GET /api/data` and expects a JSON blob shaped like `data.json`.
-
-## Deploying
-
-Deployed on Netlify (free tier): static site in `public/`, two functions in `functions/`:
-
-- `api-data` — serves the blob (self-heals if the blob is missing)
-- `api-refresh` — `@hourly` cron that regenerates the blob (30s budget; a full collect takes ~4s)
+or by hand:
 
 ```bash
-npm install -g netlify-cli    # or use npx
+node src/collect.mjs          # writes public/data.json (needs Node 18+ for fetch)
+npx serve public              # any static server
+```
+
+The site reads `GET /api/data` (serverless hosts) or falls back to `GET /data.json` (static hosts) and expects the same JSON blob.
+
+## Deploying (one command)
+
+The default host is **GitHub Pages** with an hourly Actions refresh (the scheduled build). From the repo root, one command collects fresh data and publishes the site:
+
+```bash
+GH_TOKEN=<token> npm run deploy
+```
+
+That's `node src/collect.mjs && npx gh-pages -d public` (publishes `public/` to the `gh-pages` branch, which Pages serves). For the live instance in this repo, the Actions workflow (`.github/workflows/refresh.yml`) already re-runs the collect every hour and republishes, so the Pages deployment stays current with no manual step. No secrets are needed — the upstream API is public.
+
+**Alternative: Netlify.** The same code runs on Netlify with two functions in `functions/` — `api-data` (serves the blob, self-heals if missing) and `api-refresh` (`@hourly` cron; a full collect takes ~4 s inside the 30 s budget). Config is in `netlify.toml`.
+
+```bash
+npm install -g netlify-cli
 netlify login
 netlify sites:create --name taskmarket-pulse
-# from the repo root:
 netlify deploy --prod
 ```
 
-No environment variables or secrets are required — the upstream API is public. After deploy, use the Netlify UI → Functions → `api-refresh` → **Run now** to warm the blob immediately; the first scheduled tick is the top of the next hour.
+After a Netlify deploy, use Netlify UI → Functions → `api-refresh` → **Run now** to warm the blob immediately; the first scheduled tick is the top of the next hour.
 
 ## Branding
 
