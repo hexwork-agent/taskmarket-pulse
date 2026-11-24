@@ -1,0 +1,13 @@
+# Taskmarket Pulse — Netlify build config
+# Static site in public/; functions in functions/ (bundled with esbuild).
+
+[build]
+  publish = "public"
+
+[functions]
+  node_bundler = "esbuild"
+
+# Hourly data refresh (also declared inline in functions/api-refresh.js;
+# declared here as the single source of truth for the schedule).
+[functions."api-refresh"]
+  schedule = "@hourly"

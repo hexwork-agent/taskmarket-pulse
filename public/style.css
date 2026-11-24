@@ -1,0 +1,166 @@
+/* Taskmarket Pulse — brand kit compliant.
+   Palette: ground #12100E, maroon #3A1420, panel #221E1A, line #453E37,
+   cream #EFE9E2, paper #FFF6E8, muted #B0A79D, magenta #E74079, salmon #D9A097.
+   Fonts: Instrument Serif (one headline), Inter Tight (body), Departure Mono (all numbers). */
+
+@font-face { font-family: "Inter Tight"; font-style: normal; font-weight: 400; font-display: swap; src: url("/fonts/InterTight-400.woff2") format("woff2"); }
+@font-face { font-family: "Inter Tight"; font-style: normal; font-weight: 500; font-display: swap; src: url("/fonts/InterTight-500.woff2") format("woff2"); }
+@font-face { font-family: "Inter Tight"; font-style: normal; font-weight: 600; font-display: swap; src: url("/fonts/InterTight-600.woff2") format("woff2"); }
+@font-face { font-family: "Inter Tight"; font-style: normal; font-weight: 700; font-display: swap; src: url("/fonts/InterTight-700.woff2") format("woff2"); }
+@font-face { font-family: "Instrument Serif"; font-style: normal; font-weight: 400; font-display: swap; src: url("/fonts/InstrumentSerif-Regular.woff2") format("woff2"); }
+@font-face { font-family: "Instrument Serif"; font-style: italic; font-weight: 400; font-display: swap; src: url("/fonts/InstrumentSerif-Italic.woff2") format("woff2"); }
+@font-face { font-family: "Departure Mono"; font-style: normal; font-weight: 400; font-display: swap; src: url("/fonts/DepartureMono-Regular.woff2") format("woff2"); }
+
+:root {
+  --ground: #12100E;
+  --maroon: #3A1420;
+  --panel: #221E1A;
+  --line: #453E37;
+  --cream: #EFE9E2;
+  --paper: #FFF6E8;
+  --muted: #B0A79D;
+  --magenta: #E74079;
+  --salmon: #D9A097;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background:
+    radial-gradient(900px 420px at 8% -6%, rgba(58, 20, 32, 0.85), transparent 70%),
+    radial-gradient(700px 380px at 100% 0%, rgba(58, 20, 32, 0.4), transparent 70%),
+    var(--ground);
+  color: var(--cream);
+  font-family: "Inter Tight", system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+.mono { font-family: "Departure Mono", ui-monospace, monospace; }
+a { color: var(--salmon); text-decoration: none; }
+a:hover { color: var(--magenta); }
+
+/* ---------- top bar ---------- */
+.top { position: sticky; top: 0; z-index: 50; background: rgba(18, 16, 14, 0.92); backdrop-filter: blur(6px); border-bottom: 1px solid var(--line); }
+.topbar { max-width: 1060px; margin: 0 auto; padding: 10px 18px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.brand { display: flex; align-items: center; gap: 8px; }
+.brand img { border-radius: 5px; }
+.brand-name { font-weight: 600; letter-spacing: 0.01em; }
+.nav { display: flex; gap: 12px; flex-wrap: wrap; margin-left: auto; font-size: 13px; font-family: "Departure Mono", monospace; }
+.nav a { color: var(--muted); }
+.nav a:hover { color: var(--cream); }
+.chainpick { display: flex; gap: 6px; }
+
+/* ---------- chips ---------- */
+.chip {
+  font-family: "Departure Mono", monospace; font-size: 12.5px;
+  background: transparent; color: var(--muted);
+  border: 1px solid var(--line); border-radius: 999px;
+  padding: 4px 12px; cursor: pointer;
+}
+.chip:hover { color: var(--cream); border-color: var(--muted); }
+.chip.on { background: var(--maroon); border-color: var(--magenta); color: var(--paper); }
+
+/* ---------- layout ---------- */
+main { max-width: 1060px; margin: 0 auto; padding: 0 18px 40px; }
+section { padding-top: 44px; scroll-margin-top: 70px; }
+.hero { padding-top: 54px; }
+h1.serif {
+  font-family: "Instrument Serif", serif; font-weight: 400;
+  font-size: clamp(38px, 6vw, 60px); line-height: 1.08; margin: 0 0 14px;
+  color: var(--paper);
+}
+h1.serif em { font-style: italic; color: var(--magenta); }
+.sub { max-width: 640px; color: var(--muted); font-size: 17px; margin: 0 0 10px; }
+.asof { font-size: 13px; color: var(--muted); }
+.h2 { font-size: 15px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); margin: 0 0 6px; }
+.h3 { font-size: 14px; font-weight: 600; margin: 0 0 12px; }
+.h3 .tag { font-family: "Departure Mono", monospace; font-size: 11px; color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: 1px 8px; margin-left: 8px; }
+.lede { color: var(--muted); max-width: 700px; margin: 0 0 16px; }
+.fine { color: var(--muted); font-size: 13px; margin: 10px 0 0; }
+.controls { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
+.chips { display: flex; gap: 6px; flex-wrap: wrap; }
+
+/* ---------- panels & cards ---------- */
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 18px; }
+.cards { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; margin-top: 14px; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px 14px 12px; }
+.card .num { font-family: "Departure Mono", monospace; font-size: clamp(17px, 2.4vw, 24px); color: var(--paper); display: block; }
+.card .lbl { font-size: 12px; color: var(--muted); display: block; margin-top: 3px; }
+.card .spark { margin-top: 8px; display: block; width: 100%; height: 22px; }
+.cards-3 { grid-template-columns: repeat(3, 1fr); }
+
+/* ---------- charts ---------- */
+.chart-wrap { margin: 0; }
+.chart-wrap svg { display: block; width: 100%; height: auto; }
+.chart-wrap { position: relative; }
+.charttip {
+  position: absolute; top: 10px; transform: translateX(-50%);
+  background: rgba(18, 16, 14, 0.95); border: 1px solid var(--line); border-radius: 8px;
+  padding: 8px 12px; font-size: 12.5px; pointer-events: none; display: none;
+  font-family: "Departure Mono", monospace; z-index: 5; min-width: 150px;
+}
+.charttip .tt-label { color: var(--muted); font-size: 11px; margin-bottom: 5px; }
+.charttip .tt-row { color: var(--cream); margin: 2px 0; }
+.charttip .tt-row b { color: var(--paper); }
+.charttip .sw { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 7px; vertical-align: baseline; }
+.axis { stroke: var(--line); stroke-width: 1; }
+.tick { font-family: "Departure Mono", monospace; font-size: 10px; fill: var(--muted); }
+.grid { stroke: var(--line); stroke-opacity: 0.35; stroke-dasharray: 2 4; }
+.legend { display: flex; gap: 18px; margin-top: 10px; font-family: "Departure Mono", monospace; font-size: 12px; color: var(--muted); flex-wrap: wrap; }
+.legend .sw { display: inline-block; width: 18px; height: 3px; border-radius: 2px; vertical-align: middle; margin-right: 6px; }
+
+/* ---------- heatmaps ---------- */
+.duo { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 14px; }
+.heat { display: grid; gap: 3px; }
+.heat .cell { border-radius: 3px; aspect-ratio: 1 / 1; min-height: 14px; }
+.heat-tall .cell { aspect-ratio: auto; height: 26px; }
+.heat .hlabel { font-family: "Departure Mono", monospace; font-size: 10px; color: var(--muted); display: flex; align-items: center; justify-content: flex-end; padding-right: 6px; }
+.heat .clabel { font-family: "Departure Mono", monospace; font-size: 9px; color: var(--muted); text-align: center; }
+
+/* ---------- horizontal bars ---------- */
+.hbars { display: flex; flex-direction: column; gap: 10px; }
+.hbar { display: grid; grid-template-columns: 92px 1fr 64px; align-items: center; gap: 10px; font-size: 13px; }
+.hbar .bl { color: var(--muted); }
+.hbar .track { background: var(--ground); border: 1px solid var(--line); border-radius: 4px; height: 14px; overflow: hidden; }
+.hbar .fill { height: 100%; background: linear-gradient(90deg, var(--maroon), var(--magenta)); border-radius: 3px; }
+.hbar .bv { font-family: "Departure Mono", monospace; font-size: 12px; color: var(--paper); text-align: right; }
+
+/* ---------- insights ---------- */
+.insights { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 14px; }
+.insight { background: var(--panel); border: 1px solid var(--line); border-left: 3px solid var(--magenta); border-radius: 8px; padding: 14px 16px; }
+.insight .num { font-family: "Departure Mono", monospace; font-size: 22px; color: var(--paper); display: block; margin-bottom: 2px; }
+.insight .txt { font-size: 14px; color: var(--muted); }
+.insight .txt b { color: var(--cream); font-weight: 600; }
+
+/* ---------- feed ---------- */
+.feed { padding: 6px 0; }
+.frow { display: grid; grid-template-columns: 92px 110px 1fr; gap: 12px; padding: 10px 18px; border-bottom: 1px solid var(--line); font-size: 13.5px; }
+.frow:last-child { border-bottom: none; }
+.frow .ft { font-family: "Departure Mono", monospace; font-size: 12px; color: var(--muted); }
+.frow .fk { font-family: "Departure Mono", monospace; font-size: 11px; color: var(--salmon); }
+.frow .fb { color: var(--cream); }
+
+/* ---------- method & footer ---------- */
+.method p { color: var(--muted); font-size: 14px; }
+.method code { font-family: "Departure Mono", monospace; font-size: 12.5px; color: var(--paper); background: var(--ground); border: 1px solid var(--line); border-radius: 4px; padding: 1px 6px; }
+.method ul { margin: 10px 0; padding-left: 20px; }
+.method li { margin: 4px 0; }
+footer { border-top: 1px solid var(--line); max-width: 1060px; margin: 30px auto 0; padding: 28px 18px 48px; }
+.lockup { display: block; margin-bottom: 10px; }
+footer p { margin: 4px 0; font-size: 13px; color: var(--muted); }
+
+/* ---------- responsive ---------- */
+@media (max-width: 860px) {
+  .cards { grid-template-columns: repeat(3, 1fr); }
+  .duo, .insights { grid-template-columns: 1fr; }
+  .nav { order: 3; width: 100%; margin-left: 0; }
+}
+@media (max-width: 520px) {
+  .cards { grid-template-columns: repeat(2, 1fr); }
+  .cards-3 { grid-template-columns: 1fr 1fr; }
+  .hbar { grid-template-columns: 76px 1fr 56px; }
+  .frow { grid-template-columns: 1fr; gap: 2px; }
+  .frow .ft { order: 2; }
+}

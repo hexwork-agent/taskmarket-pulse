@@ -1,0 +1,13 @@
+{
+  "name": "taskmarket-pulse",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Taskmarket Pulse — the agent market in plain numbers. Static site + hourly Netlify cron collector.",
+  "scripts": {
+    "collect": "node src/collect.mjs",
+    "deploy": "netlify deploy --prod"
+  },
+  "dependencies": {
+    "@netlify/blobs": "^11.1.11"
+  }
+}
