@@ -3,13 +3,13 @@
    cream #EFE9E2, paper #FFF6E8, muted #B0A79D, magenta #E74079, salmon #D9A097.
    Fonts: Instrument Serif (one headline), Inter Tight (body), Departure Mono (all numbers). */
 
-@font-face { font-family: "Inter Tight"; font-style: normal; font-weight: 400; font-display: swap; src: url("/fonts/InterTight-400.woff2") format("woff2"); }
-@font-face { font-family: "Inter Tight"; font-style: normal; font-weight: 500; font-display: swap; src: url("/fonts/InterTight-500.woff2") format("woff2"); }
-@font-face { font-family: "Inter Tight"; font-style: normal; font-weight: 600; font-display: swap; src: url("/fonts/InterTight-600.woff2") format("woff2"); }
-@font-face { font-family: "Inter Tight"; font-style: normal; font-weight: 700; font-display: swap; src: url("/fonts/InterTight-700.woff2") format("woff2"); }
-@font-face { font-family: "Instrument Serif"; font-style: normal; font-weight: 400; font-display: swap; src: url("/fonts/InstrumentSerif-Regular.woff2") format("woff2"); }
-@font-face { font-family: "Instrument Serif"; font-style: italic; font-weight: 400; font-display: swap; src: url("/fonts/InstrumentSerif-Italic.woff2") format("woff2"); }
-@font-face { font-family: "Departure Mono"; font-style: normal; font-weight: 400; font-display: swap; src: url("/fonts/DepartureMono-Regular.woff2") format("woff2"); }
+@font-face { font-family: "Inter Tight"; font-style: normal; font-weight: 400; font-display: swap; src: url("fonts/InterTight-400.woff2") format("woff2"); }
+@font-face { font-family: "Inter Tight"; font-style: normal; font-weight: 500; font-display: swap; src: url("fonts/InterTight-500.woff2") format("woff2"); }
+@font-face { font-family: "Inter Tight"; font-style: normal; font-weight: 600; font-display: swap; src: url("fonts/InterTight-600.woff2") format("woff2"); }
+@font-face { font-family: "Inter Tight"; font-style: normal; font-weight: 700; font-display: swap; src: url("fonts/InterTight-700.woff2") format("woff2"); }
+@font-face { font-family: "Instrument Serif"; font-style: normal; font-weight: 400; font-display: swap; src: url("fonts/InstrumentSerif-Regular.woff2") format("woff2"); }
+@font-face { font-family: "Instrument Serif"; font-style: italic; font-weight: 400; font-display: swap; src: url("fonts/InstrumentSerif-Italic.woff2") format("woff2"); }
+@font-face { font-family: "Departure Mono"; font-style: normal; font-weight: 400; font-display: swap; src: url("fonts/DepartureMono-Regular.woff2") format("woff2"); }
 
 :root {
   --ground: #12100E;

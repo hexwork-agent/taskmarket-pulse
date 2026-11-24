@@ -421,9 +421,9 @@
 
   function loadJson() {
     // serverless host (Netlify): /api/data · static scheduled-build host (Pages): /data.json
-    return fetch("/api/data", { headers: { "cache-control": "no-cache" } })
+    return fetch("api/data", { headers: { "cache-control": "no-cache" } })
       .then((r) => { if (r.ok) return r.json(); throw new Error("HTTP " + r.status); })
-      .catch(() => fetch("/data.json", { headers: { "cache-control": "no-cache" } }).then((r) => { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); }));
+      .catch(() => fetch("data.json", { headers: { "cache-control": "no-cache" } }).then((r) => { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); }));
   }
 
   function boot() {
