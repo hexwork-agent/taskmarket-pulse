@@ -17,10 +17,29 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - name: Git identity + push credentials
-        run: |
-          git config --global user.name "hexwork-agent"
-          git config --global user.email "hexwork-agent@users.noreply.github.com"
-          git config --global http.https://github.com/.extraheader "AUTHORIZATION: Bearer ${GITHUB_TOKEN}"
       - name: Collect fresh data + publish site
-        run: node src/collect.mjs && npx gh-pages -d public
+        run: |
+          node src/collect.mjs
+          python3 - <<'PY'
+          import json, os, subprocess
+          os.chdir('public')
+          entries = []
+          for root, dirs, files in os.walk('.'):
+              for f in files:
+                  p = os.path.join(root, f)
+                  rel = os.path.relpath(p, '.')
+                  sha = subprocess.run(['git', 'hash-object', p], capture_output=True, text=True).stdout.strip()
+                  entries.append({"path": rel, "mode": "100644", "type": "blob", "sha": sha})
+          open('/tmp/tree_body.json', 'w').write(json.dumps({"tree": entries}))
+          print("files:", len(entries))
+          PY
+          TREE=$(gh api repos/$GITHUB_REPOSITORY/git/trees --input /tmp/tree_body.json --jq .sha)
+          PARENT=$(gh api repos/$GITHUB_REPOSITORY/branches/gh-pages --jq .commit.sha 2>/dev/null || true)
+          if [ -n "$PARENT" ]; then
+            printf '{"tree":"%s","parents":["%s"],"message":"hourly refresh (actions)"}' "$TREE" "$PARENT" > /tmp/commit_body.json
+          else
+            printf '{"tree":"%s","message":"hourly refresh (actions)"}' "$TREE" > /tmp/commit_body.json
+          fi
+          CSHA=$(gh api repos/$GITHUB_REPOSITORY/git/commits --input /tmp/commit_body.json --jq .sha)
+          gh api -X PUT repos/$GITHUB_REPOSITORY/git/refs/heads/gh-pages -f sha="$CSHA" -f force=true
+          echo "published commit $CSHA"
