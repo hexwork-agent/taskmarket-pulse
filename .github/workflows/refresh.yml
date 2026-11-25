@@ -17,5 +17,9 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - name: Git identity for gh-pages commit
+        run: |
+          git config --global user.name "hexwork-agent"
+          git config --global user.email "hexwork-agent@users.noreply.github.com"
       - name: Collect fresh data + publish site
         run: node src/collect.mjs && npx gh-pages -d public
