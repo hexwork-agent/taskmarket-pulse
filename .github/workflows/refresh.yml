@@ -23,15 +23,31 @@ jobs:
         run: |
           node src/collect.mjs
           python3 - <<'PY'
-          import json, os, subprocess
+          import json, os, base64, urllib.request
           os.chdir('public')
+          repo = os.environ['GITHUB_REPOSITORY']
+          token = os.environ['GH_TOKEN']
+          def api(method, path, body=None):
+              data = json.dumps(body).encode() if body is not None else None
+              req = urllib.request.Request(
+                  'https://api.github.com/repos/' + repo + path, data=data, method=method,
+                  headers={'Authorization': 'Bearer ' + token,
+                           'Accept': 'application/vnd.github+json',
+                           'User-Agent': 'refresh', 'Content-Type': 'application/json'})
+              with urllib.request.urlopen(req, timeout=120) as r:
+                  return json.loads(r.read().decode())
           entries = []
           for root, dirs, files in os.walk('.'):
-              for f in files:
+              for f in sorted(files):
                   p = os.path.join(root, f)
                   rel = os.path.relpath(p, '.')
-                  sha = subprocess.run(['git', 'hash-object', p], capture_output=True, text=True).stdout.strip()
-                  entries.append({"path": rel, "mode": "100644", "type": "blob", "sha": sha})
+                  raw = open(p, 'rb').read()
+                  try:
+                      enc = {'content': raw.decode('utf-8'), 'encoding': 'utf8'}
+                  except UnicodeDecodeError:
+                      enc = {'content': base64.b64encode(raw).decode(), 'encoding': 'base64'}
+                  blob = api('POST', '/git/blobs', enc)
+                  entries.append({"path": rel, "mode": "100644", "type": "blob", "sha": blob['sha']})
           open('/tmp/tree_body.json', 'w').write(json.dumps({"tree": entries}))
           print("files:", len(entries))
           PY
