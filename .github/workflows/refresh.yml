@@ -21,6 +21,6 @@ jobs:
         run: |
           git config --global user.name "hexwork-agent"
           git config --global user.email "hexwork-agent@users.noreply.github.com"
-          git config --global url."https://x-access-token:${GITHUB_TOKEN}@github.com/".insteadOf "https://github.com/"
+          git config --global http.https://github.com/.extraheader "AUTHORIZATION: Bearer ${GITHUB_TOKEN}"
       - name: Collect fresh data + publish site
         run: node src/collect.mjs && npx gh-pages -d public
